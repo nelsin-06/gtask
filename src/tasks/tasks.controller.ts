@@ -7,10 +7,16 @@ import {
   Body,
   Param,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task } from './entities/task.entity';
-import { CreateTaskDto, UpdateTaskDto } from './dto';
+import {
+  CreateTaskDto,
+  UpdateTaskDto,
+  GetTasksQueryDto,
+  PaginatedResponse,
+} from './dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -24,6 +30,13 @@ export class TasksController {
   @Get()
   findAll(): Promise<Task[]> {
     return this.tasksService.findAll();
+  }
+
+  @Get('paginated')
+  findWithPagination(
+    @Query() query: GetTasksQueryDto,
+  ): Promise<PaginatedResponse<Task>> {
+    return this.tasksService.findWithPagination(query);
   }
 
   @Get(':id')

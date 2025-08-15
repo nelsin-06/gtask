@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import { Task } from './entities/task.entity';
+import { GetTasksQueryDto, PaginatedResponse } from './dto';
 
 @Injectable()
 export class TaskRepository {
@@ -56,5 +57,41 @@ export class TaskRepository {
     return await this.taskRepository.find({
       where: { active: false },
     });
+  }
+
+  async findWithPagination(
+    query: GetTasksQueryDto,
+  ): Promise<PaginatedResponse<Task>> {
+    const { page, pageSize, sortField, sortOrder } = query;
+    const skip = (page - 1) * pageSize;
+
+    // Create order object with proper typing
+    const orderField = sortField || 'created_at';
+    const orderDirection = (sortOrder || 'desc').toUpperCase() as
+      | 'ASC'
+      | 'DESC';
+    const order: Record<string, 'ASC' | 'DESC'> = {};
+    order[orderField] = orderDirection;
+
+    const [data, totalItems] = await this.taskRepository.findAndCount({
+      where: { active: true },
+      order,
+      skip,
+      take: pageSize,
+    });
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    return {
+      data,
+      pagination: {
+        page,
+        pageSize,
+        totalItems,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
   }
 }

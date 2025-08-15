@@ -3,6 +3,7 @@ import { Task } from './entities/task.entity';
 import { TaskRepository } from './task.repository';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { GetTasksQueryDto, PaginatedResponse } from './dto';
 
 @Injectable()
 export class TasksService {
@@ -20,6 +21,12 @@ export class TasksService {
 
   async findAll(): Promise<Task[]> {
     return await this.taskRepository.findAll();
+  }
+
+  async findWithPagination(
+    query: GetTasksQueryDto,
+  ): Promise<PaginatedResponse<Task>> {
+    return await this.taskRepository.findWithPagination(query);
   }
 
   async findById(id: number): Promise<Task | null> {
