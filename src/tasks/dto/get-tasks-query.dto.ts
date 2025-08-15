@@ -6,9 +6,10 @@ import {
   IsString,
   IsIn,
   IsEnum,
+  IsArray,
 } from 'class-validator';
 
-import { TaskSortFields, SortOrder } from '../enums';
+import { TaskSortFields, SortOrder, TaskStatusEnum } from '../enums';
 
 export class GetTasksQueryDto {
   @Type(() => Number)
@@ -40,4 +41,21 @@ export class GetTasksQueryDto {
     return value as string;
   })
   sortOrder?: SortOrder = SortOrder.DESC;
+
+  @IsOptional()
+  @IsArray({ message: 'Status must be an array' })
+  @IsEnum(TaskStatusEnum, {
+    each: true,
+    message: `Each status must be one of: ${Object.values(TaskStatusEnum).join(', ')}`,
+  })
+  @Transform(({ value }): TaskStatusEnum[] => {
+    if (typeof value === 'string') {
+      return [value as TaskStatusEnum];
+    }
+    if (Array.isArray(value)) {
+      return value as TaskStatusEnum[];
+    }
+    return [];
+  })
+  status?: TaskStatusEnum[];
 }

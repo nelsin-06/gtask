@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository, UpdateResult, In } from 'typeorm';
 import { Task } from './entities/task.entity';
 import { GetTasksQueryDto, PaginatedResponse } from './dto';
 
@@ -62,7 +62,7 @@ export class TaskRepository {
   async findWithPagination(
     query: GetTasksQueryDto,
   ): Promise<PaginatedResponse<Task>> {
-    const { page, pageSize, sortField, sortOrder } = query;
+    const { page, pageSize, sortField, sortOrder, status } = query;
     const skip = (page - 1) * pageSize;
 
     // Create order object with proper typing
@@ -73,8 +73,14 @@ export class TaskRepository {
     const order: Record<string, 'ASC' | 'DESC'> = {};
     order[orderField] = orderDirection;
 
+    // Build where clause with status filtering
+    const whereClause: Record<string, any> = { active: true };
+    if (status && status.length > 0) {
+      whereClause.status = In(status);
+    }
+
     const [data, totalItems] = await this.taskRepository.findAndCount({
-      where: { active: true },
+      where: whereClause,
       order,
       skip,
       take: pageSize,
