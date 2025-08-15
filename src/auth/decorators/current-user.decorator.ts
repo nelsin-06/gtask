@@ -16,3 +16,11 @@ export const UserId = createParamDecorator(
     return user.sub;
   },
 );
+
+export const IsGuest = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext): boolean => {
+    const request = ctx.switchToHttp().getRequest<Request>();
+    const user = request.user as JwtPayload;
+    return user.isGuest || false;
+  },
+);

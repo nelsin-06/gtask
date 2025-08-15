@@ -2,6 +2,7 @@ import {
   Injectable,
   UnauthorizedException,
   ConflictException,
+  BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -81,6 +82,56 @@ export class AuthService {
         email: user.email,
       },
     };
+  }
+
+  async createGuestSession() {
+    // Create a real temporary user in the database
+    try {
+      const guestEmail = `guest_${Math.random().toString(36).substring(2, 11)}@temp.local`;
+      const guestName = `Guest User`;
+
+      // Create temporary user in database
+      const tempUser = await this.usersService.create({
+        name: guestName,
+        email: guestEmail,
+        password: await this.encryptPassword('temp_password_' + Date.now()),
+      });
+
+      // Generate JWT token for guest
+      const payload = {
+        sub: tempUser.id,
+        email: tempUser.email,
+        name: tempUser.name,
+        isGuest: true, // Flag to identify guest sessions
+      };
+
+      const token = this.jwtService.sign(payload);
+
+      return {
+        token,
+        user: {
+          // id: tempUser.id,
+          name: tempUser.name,
+          // email: tempUser.email,
+          isGuest: true,
+        },
+      };
+    } catch (error) {
+      throw new BadRequestException(
+        'There is an error when we create a guest session',
+        error?.message,
+      );
+    }
+  }
+
+  // Optional: Method to clean up expired guest users
+  async cleanupExpiredGuestUsers() {
+    // This could be called by a cron job
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    // Find all users with email pattern guest_*@temp.local created more than 24 hours ago
+    // You would need to add this method to UsersService
+    // await this.usersService.deleteExpiredGuestUsers(oneDayAgo);
   }
 
   async encryptPassword(password: string): Promise<string> {

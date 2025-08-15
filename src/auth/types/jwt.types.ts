@@ -4,6 +4,7 @@ export interface JwtPayload {
   name: string;
   iat?: number;
   exp?: number;
+  isGuest?: boolean; // Flag to identify guest sessions
 }
 
 declare global {

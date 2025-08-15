@@ -25,4 +25,14 @@ export class AuthController {
       data: result,
     };
   }
+
+  @Post('guest')
+  async guestSignIn() {
+    const result = await this.authService.createGuestSession();
+    return {
+      success: true,
+      message: 'Guest session created successfully',
+      data: result,
+    };
+  }
 }
