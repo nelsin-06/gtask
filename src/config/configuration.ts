@@ -9,7 +9,7 @@ export default () => ({
   },
   jwt: {
     secret: process.env.JWT_SECRET || 'default-secret',
-    expiresIn: '48h',
+    expiresIn: process.env.JWT_EXPIRES_IN || '48h',
   },
   app: {
     environment: 'development',

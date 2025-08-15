@@ -1,98 +1,287 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# GTask - Task Management API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A modern and efficient task management REST API built with NestJS, TypeScript, and PostgreSQL. This application provides comprehensive task management capabilities with user authentication, real-time search, and robust API documentation.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Features
 
-## Description
+### Core Functionality
+- **Complete Task Management**: Create, read, update, delete, and organize tasks
+- **User Authentication**: JWT-based authentication with secure password hashing
+- **Guest Mode**: Temporary user sessions for quick task management without registration
+- **Advanced Search**: Case-insensitive search across task titles with partial matching
+- **Pagination & Filtering**: Efficient data retrieval with sorting and status filtering
+- **Status Management**: Track task progress with customizable status options
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Technical Features
+- **RESTful API**: Well-structured endpoints following REST principles
+- **OpenAPI Documentation**: Complete Swagger/OpenAPI documentation with interactive UI
+- **Type Safety**: Full TypeScript implementation with strict typing
+- **Database Relations**: Properly structured database with TypeORM
+- **Input Validation**: Comprehensive validation using class-validator
+- **Error Handling**: Global exception handling with meaningful error responses
+- **CORS Support**: Configured for cross-origin requests
 
-## Project setup
+## 🛠️ Tech Stack
 
+- **Framework**: [NestJS](https://nestjs.com/) - Progressive Node.js framework
+- **Language**: [TypeScript](https://www.typescriptlang.org/) - Type-safe JavaScript
+- **Database**: [PostgreSQL](https://www.postgresql.org/) - Reliable relational database
+- **ORM**: [TypeORM](https://typeorm.io/) - TypeScript-first ORM
+- **Authentication**: [JWT](https://jwt.io/) - JSON Web Tokens
+- **Validation**: [class-validator](https://github.com/typestack/class-validator) - Decorator-based validation
+- **Documentation**: [Swagger/OpenAPI](https://swagger.io/) - API documentation
+- **Password Hashing**: [bcrypt](https://github.com/kelektiv/node.bcrypt.js) - Secure password encryption
+
+## 📋 Prerequisites
+
+Before running this application, make sure you have the following installed:
+
+- **Node.js** (v18 or higher)
+- **npm** or **yarn**
+- **PostgreSQL** database
+- **Git** (for cloning the repository)
+
+## ⚙️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/nelsin-06/gtask.git
+   cd gtask
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   
+   Create a `.env` file in the root directory:
+   ```env
+   # Database Configuration
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USER=your_postgres_username
+   DB_PASS=your_postgres_password
+   DB_NAME=gtask_db
+   
+   # JWT Configuration
+   JWT_SECRET=your-super-secret-jwt-key-here
+   JWT_EXPIRES_IN=24h
+   
+   # Application Configuration
+   PORT=8080
+   ```
+
+4. **Set up the database**
+   
+   Make sure PostgreSQL is running and create a database:
+   ```sql
+   CREATE DATABASE gtask_db;
+   ```
+   
+   **Note**: The application uses TypeORM with `synchronize: true` in development mode, which means the database tables will be created automatically when you start the application. In production, you should set `synchronize: false` and use proper migrations.
+
+5. **Start the application**
+   
+   The application will automatically create the necessary database tables on first run:
+   ```bash
+   npm run start:dev
+   ```
+
+## 🚀 Running the Application
+
+### Development Mode
 ```bash
-$ npm install
+# Start the application in watch mode
+npm run start:dev
 ```
 
-## Compile and run the project
-
+### Production Mode
 ```bash
-# development
-$ npm run start
+# Build the application
+npm run build
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Start the production server
+npm run start:prod
 ```
 
-## Run tests
-
+### Other Commands
 ```bash
-# unit tests
-$ npm run test
+# Format code
+npm run format
 
-# e2e tests
-$ npm run test:e2e
+# Lint code
+npm run lint
 
-# test coverage
-$ npm run test:cov
+# Run tests
+npm run test
+
+# Run end-to-end tests
+npm run test:e2e
+
+# Generate test coverage
+npm run test:cov
 ```
 
-## Deployment
+## 📚 API Documentation
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Once the application is running, you can access the interactive API documentation at:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+**Swagger UI**: `http://localhost:8080/api-docs`
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+The documentation includes:
+- Complete endpoint descriptions
+- Request/response schemas
+- Authentication requirements
+- Example requests and responses
+- Try-it-out functionality
+
+## 🔐 Authentication
+
+### JWT Authentication
+Most endpoints require JWT authentication. Include the token in the Authorization header:
+
+```http
+Authorization: Bearer your-jwt-token-here
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Guest Mode
+For quick access without registration:
 
-## Resources
+```http
+POST /auth/guest
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+This creates a temporary user session with a valid JWT token.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## 📖 API Endpoints
 
-## Support
+### Authentication
+- `POST /auth/signup` - Register a new user
+- `POST /auth/signin` - Login with credentials
+- `POST /auth/guest` - Create a guest session
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Tasks
+- `GET /tasks` - Get paginated tasks with filtering and search
+- `POST /tasks` - Create a new task
+- `GET /tasks/:id` - Get a specific task
+- `PUT /tasks/:id` - Update a task
+- `DELETE /tasks/:id` - Delete a task
 
-## Stay in touch
+### Query Parameters (GET /tasks)
+- `page` - Page number (default: 1)
+- `pageSize` - Items per page (default: 10)
+- `search` - Search term for task titles (case-insensitive)
+- `status[]` - Filter by task status
+- `sortField` - Field to sort by
+- `sortOrder` - Sort direction (asc/desc)
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+## 🔍 Search Functionality
 
-## License
+The search feature supports:
+- **Partial matching**: "work" matches "homework", "workout", "work project"
+- **Case-insensitive**: "WORK", "work", "Work" all return the same results
+- **Real-time filtering**: Combined with other filters and pagination
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Example:
+```http
+GET /tasks?search=project&status=pending&page=1&pageSize=5
+```
+
+## 🗃️ Database Schema
+
+### Users Table
+- `id` - Primary key
+- `email` - Unique email address
+- `password` - Hashed password
+- `isGuest` - Boolean flag for guest users
+- `created_at` - Creation timestamp
+- `updated_at` - Last update timestamp
+
+### Tasks Table
+- `id` - Primary key
+- `title` - Task title
+- `description` - Task description
+- `status` - Task status (pending, in_progress, completed)
+- `user_id` - Foreign key to users table
+- `active` - Soft delete flag
+- `created_at` - Creation timestamp
+- `updated_at` - Last update timestamp
+
+## 🛡️ Security Features
+
+- **Password Hashing**: Bcrypt with salt rounds
+- **JWT Authentication**: Secure token-based authentication
+- **Input Validation**: Comprehensive validation on all endpoints
+- **SQL Injection Protection**: TypeORM parameterized queries
+- **CORS Configuration**: Controlled cross-origin access
+- **Error Handling**: No sensitive information in error responses
+
+## 📁 Project Structure
+
+```
+src/
+├── auth/                 # Authentication module
+│   ├── decorators/      # Custom decorators
+│   ├── dto/            # Data transfer objects
+│   ├── guards/         # JWT guards
+│   └── types/          # Type definitions
+├── common/              # Shared utilities
+│   ├── dto/            # Common DTOs
+│   ├── filters/        # Exception filters
+│   ├── helpers/        # Helper functions
+│   └── interceptors/   # Response interceptors
+├── config/              # Configuration files
+├── database/            # Database module
+├── tasks/               # Tasks module
+│   ├── dto/            # Task DTOs
+│   ├── entities/       # Task entity
+│   ├── enums/          # Task enums
+│   └── guards/         # Task-specific guards
+└── users/               # Users module
+    ├── dto/            # User DTOs
+    └── entities/       # User entity
+```
+
+## 🚀 Deployment
+
+### Environment Setup
+1. Set production environment variables
+2. Configure production database
+3. Build the application
+4. Start with PM2 or similar process manager
+
+### Docker (Optional)
+```dockerfile
+FROM node:18-alpine
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+COPY . .
+RUN npm run build
+EXPOSE 8080
+CMD ["npm", "run", "start:prod"]
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👨‍💻 Author
+
+**Nelson** - [@nelsin-06](https://github.com/nelsin-06)
+
+## 🙏 Acknowledgments
+
+- [NestJS](https://nestjs.com/) for the amazing framework
+- [TypeORM](https://typeorm.io/) for the excellent ORM
+- [PostgreSQL](https://www.postgresql.org/) for the reliable database
