@@ -21,7 +21,6 @@ import {
   ApiUnauthorizedResponse,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
-  ApiForbiddenResponse,
 } from '@nestjs/swagger';
 import { TasksService } from './tasks.service';
 import { Task } from './entities/task.entity';

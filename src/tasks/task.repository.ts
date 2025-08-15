@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult, In } from 'typeorm';
+import { Repository, UpdateResult, In, Like } from 'typeorm';
 import { Task } from './entities/task.entity';
 import { GetTasksQueryDto, PaginatedResponse } from './dto';
 
@@ -109,7 +109,7 @@ export class TaskRepository {
   async findWithPagination(
     query: GetTasksQueryDto,
   ): Promise<PaginatedResponse<Task>> {
-    const { page, pageSize, sortField, sortOrder, status } = query;
+    const { page, pageSize, sortField, sortOrder, status, search } = query;
     const skip = (page - 1) * pageSize;
 
     // Create order object with proper typing
@@ -120,10 +120,13 @@ export class TaskRepository {
     const order: Record<string, 'ASC' | 'DESC'> = {};
     order[orderField] = orderDirection;
 
-    // Build where clause with status filtering
+    // Build where clause with status filtering and search
     const whereClause: Record<string, any> = { active: true };
     if (status && status.length > 0) {
       whereClause.status = In(status);
+    }
+    if (search) {
+      whereClause.title = Like(`%${search}%`);
     }
 
     const [data, totalItems] = await this.taskRepository.findAndCount({
@@ -152,7 +155,7 @@ export class TaskRepository {
     query: GetTasksQueryDto,
     userId: number,
   ): Promise<PaginatedResponse<Task>> {
-    const { page, pageSize, sortField, sortOrder, status } = query;
+    const { page, pageSize, sortField, sortOrder, status, search } = query;
     const skip = (page - 1) * pageSize;
 
     // Create order object with proper typing
@@ -163,13 +166,16 @@ export class TaskRepository {
     const order: Record<string, 'ASC' | 'DESC'> = {};
     order[orderField] = orderDirection;
 
-    // Build where clause with status filtering and user filtering
+    // Build where clause with status filtering, user filtering, and search
     const whereClause: Record<string, any> = {
       active: true,
       user: { id: userId },
     };
     if (status && status.length > 0) {
       whereClause.status = In(status);
+    }
+    if (search) {
+      whereClause.title = Like(`%${search}%`);
     }
 
     const [data, totalItems] = await this.taskRepository.findAndCount({

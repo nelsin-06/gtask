@@ -8,10 +8,19 @@ import {
   IsEnum,
   IsArray,
 } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 import { TaskSortFields, SortOrder, TaskStatusEnum } from '../enums';
 
 export class GetTasksQueryDto {
+  @ApiPropertyOptional({
+    description: 'Search term to filter tasks by title',
+    example: 'homework',
+  })
+  @IsOptional()
+  @IsString()
+  search?: string;
+
   @Type(() => Number)
   @IsInt({ message: 'Page must be an integer' })
   @Min(1, { message: 'Page must be greater than 0' })
