@@ -8,6 +8,7 @@ import {
   Param,
   ParseIntPipe,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { Task } from './entities/task.entity';
@@ -17,6 +18,7 @@ import {
   GetTasksQueryDto,
   PaginatedResponse,
 } from './dto';
+import { TaskExistsGuard } from './guards';
 
 @Controller('tasks')
 export class TasksController {
@@ -40,11 +42,13 @@ export class TasksController {
   }
 
   @Get(':id')
+  @UseGuards(TaskExistsGuard)
   findById(@Param('id', ParseIntPipe) id: number): Promise<Task | null> {
     return this.tasksService.findById(id);
   }
 
   @Put(':id')
+  @UseGuards(TaskExistsGuard)
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
@@ -53,6 +57,7 @@ export class TasksController {
   }
 
   @Delete(':id')
+  @UseGuards(TaskExistsGuard)
   delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
     return this.tasksService.delete(id);
   }
