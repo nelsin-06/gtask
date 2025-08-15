@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult, In, Like } from 'typeorm';
+import { Repository, UpdateResult, In, ILike } from 'typeorm';
 import { Task } from './entities/task.entity';
 import { GetTasksQueryDto, PaginatedResponse } from './dto';
 
@@ -126,7 +126,7 @@ export class TaskRepository {
       whereClause.status = In(status);
     }
     if (search) {
-      whereClause.title = Like(`%${search}%`);
+      whereClause.title = ILike(`%${search}%`);
     }
 
     const [data, totalItems] = await this.taskRepository.findAndCount({
@@ -175,7 +175,7 @@ export class TaskRepository {
       whereClause.status = In(status);
     }
     if (search) {
-      whereClause.title = Like(`%${search}%`);
+      whereClause.title = ILike(`%${search}%`);
     }
 
     const [data, totalItems] = await this.taskRepository.findAndCount({
