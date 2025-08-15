@@ -28,9 +28,11 @@ export class ResponseInterceptor<T>
           'timestamp' in data &&
           'path' in data
         ) {
+          const existingResponse = data as unknown as ApiResponse<T>;
           return {
-            ...(data as ApiResponse<T>),
+            ...existingResponse,
             path: request.url,
+            method: request.method,
             timestamp: new Date().toISOString(),
           };
         }
@@ -40,6 +42,7 @@ export class ResponseInterceptor<T>
           data,
           timestamp: new Date().toISOString(),
           path: request.url,
+          method: request.method,
         };
       }),
     );

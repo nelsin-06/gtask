@@ -5,4 +5,5 @@ export interface ApiResponse<T = any> {
   errors?: any;
   timestamp: string;
   path: string;
+  method: string;
 }

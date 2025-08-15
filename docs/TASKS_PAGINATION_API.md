@@ -117,7 +117,10 @@ GET /tasks/paginated?page=1&pageSize=10&status=pending&status=completed&sortFiel
       "hasPreviousPage": false
     }
   },
-  "message": "Tasks retrieved successfully"
+  "message": "Tasks retrieved successfully",
+  "timestamp": "2025-08-15T01:23:45.123Z",
+  "path": "/tasks/paginated?page=1&pageSize=10&status=in_progress",
+  "method": "GET"
 }
 ```
 
@@ -128,6 +131,13 @@ GET /tasks/paginated?page=1&pageSize=10&status=pending&status=completed&sortFiel
 - `totalPages`: Total number of pages available
 - `hasNextPage`: Boolean indicating if there's a next page
 - `hasPreviousPage`: Boolean indicating if there's a previous page
+
+#### Response Metadata
+- `success`: Boolean indicating if the request was successful
+- `message`: Human-readable message describing the result
+- `timestamp`: ISO 8601 timestamp of when the response was generated
+- `path`: The requested URL path including query parameters
+- `method`: HTTP method used for the request (GET, POST, PUT, DELETE, etc.)
 
 ### Error Responses
 
@@ -141,7 +151,8 @@ GET /tasks/paginated?page=1&pageSize=10&status=pending&status=completed&sortFiel
     "Page size must be greater than 0"
   ],
   "timestamp": "2025-08-15T01:23:45.123Z",
-  "path": "/tasks/paginated"
+  "path": "/tasks/paginated?page=0&pageSize=0",
+  "method": "GET"
 }
 ```
 
@@ -154,7 +165,8 @@ GET /tasks/paginated?page=1&pageSize=10&status=pending&status=completed&sortFiel
     "Sort field must be one of: id, title, status, priority, due_date, created_at, updated_at"
   ],
   "timestamp": "2025-08-15T01:23:45.123Z",
-  "path": "/tasks/paginated"
+  "path": "/tasks/paginated?page=1&pageSize=10&sortField=invalid",
+  "method": "GET"
 }
 ```
 
@@ -167,7 +179,8 @@ GET /tasks/paginated?page=1&pageSize=10&status=pending&status=completed&sortFiel
     "Sort order must be either \"asc\" or \"desc\""
   ],
   "timestamp": "2025-08-15T01:23:45.123Z",
-  "path": "/tasks/paginated"
+  "path": "/tasks/paginated?page=1&pageSize=10&sortOrder=invalid",
+  "method": "GET"
 }
 ```
 
@@ -180,7 +193,8 @@ GET /tasks/paginated?page=1&pageSize=10&status=pending&status=completed&sortFiel
     "Each status must be one of: pending, in_progress, completed"
   ],
   "timestamp": "2025-08-15T01:23:45.123Z",
-  "path": "/tasks/paginated"
+  "path": "/tasks/paginated?page=1&pageSize=10&status=invalid",
+  "method": "GET"
 }
 ```
 
@@ -193,7 +207,8 @@ GET /tasks/paginated?page=1&pageSize=10&status=pending&status=completed&sortFiel
     "Internal server error"
   ],
   "timestamp": "2025-08-15T01:23:45.123Z",
-  "path": "/tasks/paginated"
+  "path": "/tasks/paginated?page=1&pageSize=10",
+  "method": "GET"
 }
 ```
 

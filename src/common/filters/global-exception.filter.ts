@@ -52,6 +52,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       errors,
       timestamp: new Date().toISOString(),
       path: request.url,
+      method: request.method,
     };
 
     response.status(status).json(errorResponse);
