@@ -13,7 +13,14 @@ export class TaskRepository {
 
   async create(data: Partial<Task>): Promise<Task> {
     const task = this.taskRepository.create(data);
-    return await this.taskRepository.save(task);
+    const savedTask = await this.taskRepository.save(task);
+
+    // Return task without user relation to avoid exposing sensitive data
+    const result = await this.taskRepository.findOne({
+      where: { id: savedTask.id },
+    });
+
+    return result!; // We know it exists since we just created it
   }
 
   async findAll(): Promise<Task[]> {
@@ -26,21 +33,21 @@ export class TaskRepository {
   async findAllByUser(userId: number): Promise<Task[]> {
     return await this.taskRepository.find({
       where: { active: true, user: { id: userId } },
-      relations: ['user'],
+      // Remove relations to avoid exposing user data
     });
   }
 
   async findById(id: number): Promise<Task | null> {
     return await this.taskRepository.findOne({
       where: { id, active: true },
-      relations: ['user'],
+      // Remove relations to avoid exposing user data
     });
   }
 
   async findByIdAndUserId(id: number, userId: number): Promise<Task | null> {
     return await this.taskRepository.findOne({
       where: { id, active: true, user: { id: userId } },
-      relations: ['user'],
+      // Remove relations to avoid exposing user data
     });
   }
 
@@ -170,7 +177,6 @@ export class TaskRepository {
       order,
       skip,
       take: pageSize,
-      relations: ['user'],
     });
 
     const totalPages = Math.ceil(totalItems / pageSize);
