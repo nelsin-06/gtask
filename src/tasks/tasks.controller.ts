@@ -19,32 +19,42 @@ import {
   PaginatedResponse,
 } from './dto';
 import { TaskExistsGuard } from './guards';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { UserId } from '../auth/decorators/current-user.decorator';
 
 @Controller('tasks')
+@UseGuards(JwtAuthGuard)
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto): Promise<Task> {
-    return this.tasksService.create(createTaskDto);
+  create(
+    @Body() createTaskDto: CreateTaskDto,
+    @UserId() userId: number,
+  ): Promise<Task> {
+    return this.tasksService.create(createTaskDto, userId);
   }
 
   @Get()
-  findAll(): Promise<Task[]> {
-    return this.tasksService.findAll();
+  findAll(@UserId() userId: number): Promise<Task[]> {
+    return this.tasksService.findByUserId(userId);
   }
 
   @Get('paginated')
   findWithPagination(
     @Query() query: GetTasksQueryDto,
+    @UserId() userId: number,
   ): Promise<PaginatedResponse<Task>> {
-    return this.tasksService.findWithPagination(query);
+    return this.tasksService.findWithPaginationByUserId(query, userId);
   }
 
   @Get(':id')
   @UseGuards(TaskExistsGuard)
-  findById(@Param('id', ParseIntPipe) id: number): Promise<Task | null> {
-    return this.tasksService.findById(id);
+  findById(
+    @Param('id', ParseIntPipe) id: number,
+    @UserId() userId: number,
+  ): Promise<Task | null> {
+    return this.tasksService.findByIdAndUserId(id, userId);
   }
 
   @Put(':id')
@@ -52,13 +62,17 @@ export class TasksController {
   update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
+    @UserId() userId: number,
   ): Promise<Task | null> {
-    return this.tasksService.update(id, updateTaskDto);
+    return this.tasksService.updateByUserIdAndTaskId(id, updateTaskDto, userId);
   }
 
   @Delete(':id')
   @UseGuards(TaskExistsGuard)
-  delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.tasksService.delete(id);
+  delete(
+    @Param('id', ParseIntPipe) id: number,
+    @UserId() userId: number,
+  ): Promise<void> {
+    return this.tasksService.deleteByUserIdAndTaskId(id, userId);
   }
 }

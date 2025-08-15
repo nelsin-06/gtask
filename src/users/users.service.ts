@@ -1,26 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    // Check if email already exists
+    const existingUser = await this.userRepository.findOne({
+      where: { email: createUserDto.email },
+    });
+
+    if (existingUser) {
+      throw new ConflictException('Email already exists');
+    }
+
+    const user = this.userRepository.create(createUserDto);
+    return await this.userRepository.save(user);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<User[]> {
+    return await this.userRepository.find({
+      where: { active: true },
+      relations: ['tasks'],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findById(id: number): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { id, active: true },
+      relations: ['tasks'],
+    });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findByEmail(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({
+      where: { email, active: true },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<User | null> {
+    const result = await this.userRepository.update(id, updateUserDto);
+    if (result.affected === 0) {
+      return null;
+    }
+    return await this.findById(id);
+  }
+
+  async remove(id: number): Promise<void> {
+    await this.userRepository.update(id, { active: false });
   }
 }

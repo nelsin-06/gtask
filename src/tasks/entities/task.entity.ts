@@ -5,7 +5,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Task {
@@ -39,4 +41,7 @@ export class Task {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ManyToOne(() => User, (user) => user.tasks, { nullable: true })
+  user: User;
 }

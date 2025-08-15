@@ -19,12 +19,28 @@ export class TaskRepository {
   async findAll(): Promise<Task[]> {
     return await this.taskRepository.find({
       where: { active: true },
+      relations: ['user'],
+    });
+  }
+
+  async findAllByUser(userId: number): Promise<Task[]> {
+    return await this.taskRepository.find({
+      where: { active: true, user: { id: userId } },
+      relations: ['user'],
     });
   }
 
   async findById(id: number): Promise<Task | null> {
     return await this.taskRepository.findOne({
       where: { id, active: true },
+      relations: ['user'],
+    });
+  }
+
+  async findByIdAndUserId(id: number, userId: number): Promise<Task | null> {
+    return await this.taskRepository.findOne({
+      where: { id, active: true, user: { id: userId } },
+      relations: ['user'],
     });
   }
 
@@ -38,8 +54,32 @@ export class TaskRepository {
     return await this.findById(id);
   }
 
+  async updateByUserIdAndTaskId(
+    id: number,
+    data: Partial<Task>,
+    userId: number,
+  ): Promise<Task | null> {
+    const result: UpdateResult = await this.taskRepository.update(
+      { id, user: { id: userId }, active: true },
+      data,
+    );
+
+    if (result.affected === 0) {
+      return null;
+    }
+
+    return await this.findByIdAndUserId(id, userId);
+  }
+
   async delete(id: number): Promise<void> {
     await this.taskRepository.update(id, { active: false });
+  }
+
+  async deleteByUserIdAndTaskId(id: number, userId: number): Promise<void> {
+    await this.taskRepository.update(
+      { id, user: { id: userId }, active: true },
+      { active: false },
+    );
   }
 
   async exists(id: number): Promise<boolean> {
@@ -84,6 +124,53 @@ export class TaskRepository {
       order,
       skip,
       take: pageSize,
+    });
+
+    const totalPages = Math.ceil(totalItems / pageSize);
+
+    return {
+      data,
+      pagination: {
+        page,
+        pageSize,
+        totalItems,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
+  }
+
+  async findWithPaginationByUser(
+    query: GetTasksQueryDto,
+    userId: number,
+  ): Promise<PaginatedResponse<Task>> {
+    const { page, pageSize, sortField, sortOrder, status } = query;
+    const skip = (page - 1) * pageSize;
+
+    // Create order object with proper typing
+    const orderField = sortField || 'created_at';
+    const orderDirection = (sortOrder || 'desc').toUpperCase() as
+      | 'ASC'
+      | 'DESC';
+    const order: Record<string, 'ASC' | 'DESC'> = {};
+    order[orderField] = orderDirection;
+
+    // Build where clause with status filtering and user filtering
+    const whereClause: Record<string, any> = {
+      active: true,
+      user: { id: userId },
+    };
+    if (status && status.length > 0) {
+      whereClause.status = In(status);
+    }
+
+    const [data, totalItems] = await this.taskRepository.findAndCount({
+      where: whereClause,
+      order,
+      skip,
+      take: pageSize,
+      relations: ['user'],
     });
 
     const totalPages = Math.ceil(totalItems / pageSize);
